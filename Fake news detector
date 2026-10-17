@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Fake News Detection</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 25px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px #0002;
+    }
+
+    h1 {
+      text-align: center;
+      color: #173b70;
+    }
+
+    p {
+      line-height: 1.6;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 12px;
+      background: #1756a9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #103d7a;
+    }
+
+    .examples button {
+      background: #e5ecf7;
+      color: #173b70;
+      width: auto;
+      margin: 4px;
+      padding: 9px;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      display: none;
+      overflow-wrap: anywhere;
+    }
+
+    .real {
+      background: #e0f6e7;
+      color: #17652e;
+    }
+
+    .fake {
+      background: #ffe6e6;
+      color: #a51e1e;
+    }
+
+    .unknown {
+      background: #fff2cc;
+      color: #765500;
+    }
+
+    .note {
+      font-size: 13px;
+      color: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Fake News Detection</h1>
+
+    <p>
+      Enter a news headline or select one of the eight
+      sample examples to test the project.
+    </p>
+
+    <textarea id="newsText"
+      placeholder="Paste your news headline here..."></textarea>
+
+    <button onclick="detectNews()">Check News</button>
+
+    <h3>Test Examples</h3>
+    <div class="examples" id="examples"></div>
+
+    <div id="result" role="status" aria-live="polite"></div>
+
+    <p class="note">
+      Educational demonstration only. Results are based on
+      predefined examples, not independent fact verification.
+    </p>
+  </div>
+
+  <script>
+    // Eight predefined examples for demonstration.
+    // These labels are illustrative, not verified facts.
+
+    const samples = [
+      {
+        text: "A secret pill makes every person immortal overnight",
+        label: "fake"
+      },
+      {
+        text: "The Earth revolves around the Sun",
+        label: "real"
+      },
+      {
+        text: "Water freezes at approximately zero degrees Celsius",
+        label: "real"
+      },
+      {
+        text: "The Moon is a natural satellite of Earth",
+        label: "real"
+      },
+      {
+        text: "Drinking bleach safely cures every disease",
+        label: "fake"
+      },
+      {
+        text: "Humans can breathe normally in outer space without equipment",
+        label: "fake"
+      },
+      {
+        text: "Plants use sunlight during photosynthesis",
+        label: "real"
+      },
+      {
+        text: "The Earth is flat and has no gravity",
+        label: "fake"
+      }
+    ];
+
+    // Create a button for each sample.
+    const examplesBox = document.getElementById("examples");
+
+    samples.forEach((sample, index) => {
+      const button = document.createElement("button");
+      button.textContent = "Example " + (index + 1);
+
+      button.onclick = function () {
+        document.getElementById("newsText").value =
+          sample.text;
+        detectNews();
+      };
+
+      examplesBox.appendChild(button);
+    });
+
+    function detectNews() {
+      const input = document.getElementById("newsText")
+        .value.trim();
+
+      const result = document.getElementById("result");
+
+      result.style.display = "block";
+      result.className = "";
+
+      if (input.length === 0) {
+        result.classList.add("unknown");
+        result.textContent = "Please enter some news text.";
+        return;
+      }
+
+      // Match the input with a predefined example.
+      const normalizedInput = input.toLowerCase()
+        .replace(/[^\w\s]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const match = samples.find(sample =>
+        sample.text.toLowerCase()
+          .replace(/[^\w\s]/g, "")
+          .replace(/\s+/g, " ")
+          .trim() === normalizedInput
+      );
+
+      if (match && match.label === "real") {
+        result.classList.add("real");
+        result.textContent =
+          "DEMO RESULT: REAL-LABELED EXAMPLE";
+      } else if (match && match.label === "fake") {
+        result.classList.add("fake");
+        result.textContent =
+          "DEMO RESULT: FAKE-LABELED EXAMPLE";
+      } else {
+        result.classList.add("unknown");
+        result.textContent =
+          "UNVERIFIED: This news is not in the sample database. " +
+          "Check reliable sources before deciding.";
+      }
+    }
+  </script>
+</body>
+</html>
